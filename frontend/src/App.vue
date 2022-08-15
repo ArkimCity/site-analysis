@@ -1,6 +1,6 @@
 <template>
   <div>
-    <SideBar/>
+    <SideBar id="sidebar"/>
     <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
@@ -39,5 +39,14 @@ export default {
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+
+#sidebar {
+  position: absolute;
+  background-color: aliceblue;
+  height: 100vh;
+  width: 300px;
+  left: 0;
+  top: 0;
 }
 </style>

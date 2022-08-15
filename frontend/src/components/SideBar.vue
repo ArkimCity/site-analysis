@@ -1,5 +1,5 @@
 <template>
-<div class="a" id='sidebar'><Canvas/></div>
+<div id='sidebar'><Canvas id="canvas"/></div>
 </template>
 
 <script>
@@ -13,4 +13,8 @@ export default {
 }
 </script>
 
-<style ref='../assets/css/sidebar.css'></style>
+<style>
+#canvas {
+    bottom: 0;
+}
+</style>
