@@ -9,10 +9,6 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
-    "postprocessing": "^6.28.5",
-    "pug-plain-loader": "^1.1.0",
-    "three": "^0.143.0",
-    "three-trackballcontrols": "^0.9.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"
