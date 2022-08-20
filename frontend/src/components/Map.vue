@@ -27,7 +27,6 @@ const material = new THREE.MeshStandardMaterial({
 })
 const cube = new THREE.Mesh(geometry, material)
 const axes = new THREE.AxesHelper(5)
-const speed = 0.01
 const controls = new OrbitControls(camera, renderer.domElement)
 
 export default {
@@ -61,7 +60,6 @@ export default {
     animate: function () {
       requestAnimationFrame(this.animate)
       renderer.render(scene, camera)
-      cube.rotation.y += speed
       controls.update()
     }
   },
