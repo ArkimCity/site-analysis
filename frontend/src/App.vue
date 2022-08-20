@@ -29,7 +29,10 @@ export default {
 }
 
 #nav {
-  padding: 30px;
+  order: 2;
+  background-color: #5a748f;
+  height: 60px;
+  top: 0;
 }
 
 #nav a {
@@ -47,6 +50,6 @@ export default {
   height: 100vh;
   width: 300px;
   left: 0;
-  top: 0;
+  top: 70px;
 }
 </style>

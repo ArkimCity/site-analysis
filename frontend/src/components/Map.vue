@@ -6,8 +6,8 @@
 // import { Clock, PerspectiveCamera, Scene, WebGLRenderer } from 'three'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-// import TrackballControls from 'three-trackballcontrols'
 
+// 각 기본 렌더링 사항 정의
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(
   75,
@@ -29,8 +29,6 @@ const cube = new THREE.Mesh(geometry, material)
 const axes = new THREE.AxesHelper(5)
 const speed = 0.01
 const controls = new OrbitControls(camera, renderer.domElement)
-// let controls = null
-// const controls = new TrackballControls(camera)
 
 export default {
   name: 'Map',
