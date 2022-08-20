@@ -50,17 +50,19 @@ export default {
     scene.add(light)
     scene.add(cube)
 
+    // const mapDataFeaturesTest = [mapData.features[0], mapData.features[1]]
+
     mapData.features.forEach((element) => {
       this.makeBuilding(scene, element)
-      return false
     })
 
     scene.add(axes)
     renderer.setSize(window.innerWidth, window.innerHeight)
     light.position.set(smapleStartPoint[0], smapleStartPoint[1], 10)
+    light.target = cube
 
     // 카메라 위치/방향 업데이트
-    camera.position.set(smapleStartPoint[0], smapleStartPoint[1], 10)
+    camera.position.set(smapleStartPoint[0], smapleStartPoint[1], 50)
     controls.target = new THREE.Vector3(smapleStartPoint[0], smapleStartPoint[1], 0)
     scene.background = new THREE.Color('hsl(0, 100%, 100%)')
     // controls.rotateSpeed = 1.0
@@ -80,20 +82,23 @@ export default {
       controls.update()
     },
     makeBuilding: function (scene, data) {
-      if (data.geometry.type === 'Polygon' && data.properties.A10 && data.geometry.coordinates.length > 0) {
-        const coords = data.geometry.coordinates
-        const height = data.properties.A10
+      const coords = data.geometry.coordinates
+      const height = data.properties.A10
 
+      if (data.geometry.type === 'Polygon' && data.properties.A10 && data.geometry.coordinates.length > 0) {
         const shape = new THREE.Shape()
-        const firstCoord = coords.shift()
-        shape.moveTo(parseFloat(firstCoord[0]), parseFloat(firstCoord[1]))
-        coords.forEach(element => {
-          shape.lineTo(parseFloat(element[0]), parseFloat(element[1]))
+        const coordsArray = coords[0]
+
+        const firstCoord = coordsArray.shift()
+        console.log(coordsArray)
+
+        shape.moveTo(firstCoord[0], firstCoord[0], 0)
+        coordsArray.forEach(element => {
+          shape.lineTo(element[0], element[1], 0)
         })
 
         const extrudeSettings = {
-          steps: 1,
-          depth: parseFloat(height),
+          depth: height,
           bevelEnabled: false
         }
 
