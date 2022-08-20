@@ -1,18 +1,12 @@
 <template>
-  <div ref='canvas'></div>
+  <div ref='map'></div>
 </template>
 
 <script>
 // import { Clock, PerspectiveCamera, Scene, WebGLRenderer } from 'three'
 import * as THREE from 'three'
 // import TrackballControls from 'three-trackballcontrols'
-// import {
-//     BloomEffect,
-//     EffectComposer,
-//     GlitchPass,
-//     EffectPass,
-//     RenderPass
-// } from 'postprocessing'
+
 const scene = new THREE.Scene()
 // const composer = new THREE.EffectComposer(new WebGLRenderer())
 // const effectPass = new THREE.EffectPass(camera, new BloomEffect())
@@ -39,7 +33,7 @@ const speed = 0.01
 // const controls = new TrackballControls(camera)
 
 export default {
-  name: 'TheCanvas',
+  name: 'Map',
   data: function () {
     return {
     }
@@ -49,7 +43,7 @@ export default {
     scene.add(light)
     scene.add(cube)
     scene.add(axes)
-    // renderer.setSize(window.innerWidth, window.innerHeight)
+    renderer.setSize(window.innerWidth, window.innerHeight)
     light.position.set(0, 0, 10)
     camera.position.z = 5
     scene.background = new THREE.Color('hsl(0, 100%, 100%)')
@@ -62,7 +56,7 @@ export default {
     // controls.dynamicDampingFactor = 0.3
   },
   mounted: function () {
-    this.$refs.canvas.appendChild(renderer.domElement)
+    this.$refs.map.appendChild(renderer.domElement)
     this.animate()
   },
   methods: {
