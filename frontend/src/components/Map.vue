@@ -17,12 +17,18 @@ smapleStartPoint = [parseFloat(smapleStartPoint[0]), parseFloat(smapleStartPoint
 // 각 기본 렌더링 사항 정의
 const scene = new THREE.Scene()
 // 카메라 설정
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
+const width = window.innerWidth
+const height = window.innerHeight
+const camera = new THREE.OrthographicCamera(
+  width / -2, width / 2, height / 2, height / -2, 1, 1000
 )
+
+// const camera = new THREE.PerspectiveCamera(
+//   75,
+//   window.innerWidth / window.innerHeight,
+//   0.1,
+//   10000
+// )
 const renderer = new THREE.WebGLRenderer({
   antialias: true
 })
@@ -58,11 +64,11 @@ export default {
 
     scene.add(axes)
     renderer.setSize(window.innerWidth, window.innerHeight)
-    light.position.set(smapleStartPoint[0], smapleStartPoint[1], 10)
+    light.position.set(smapleStartPoint[0], smapleStartPoint[1], 100)
     light.target = cube
 
     // 카메라 위치/방향 업데이트
-    camera.position.set(smapleStartPoint[0], smapleStartPoint[1], 50)
+    camera.position.set(smapleStartPoint[0], smapleStartPoint[1], 100)
     controls.target = new THREE.Vector3(smapleStartPoint[0], smapleStartPoint[1], 0)
     scene.background = new THREE.Color('hsl(0, 100%, 100%)')
     // controls.rotateSpeed = 1.0
