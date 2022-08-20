@@ -5,11 +5,10 @@
 <script>
 // import { Clock, PerspectiveCamera, Scene, WebGLRenderer } from 'three'
 import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 // import TrackballControls from 'three-trackballcontrols'
 
 const scene = new THREE.Scene()
-// const composer = new THREE.EffectComposer(new WebGLRenderer())
-// const effectPass = new THREE.EffectPass(camera, new BloomEffect())
 const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
@@ -29,6 +28,7 @@ const material = new THREE.MeshStandardMaterial({
 const cube = new THREE.Mesh(geometry, material)
 const axes = new THREE.AxesHelper(5)
 const speed = 0.01
+const controls = new OrbitControls(camera, renderer.domElement)
 // let controls = null
 // const controls = new TrackballControls(camera)
 
@@ -64,7 +64,7 @@ export default {
       requestAnimationFrame(this.animate)
       renderer.render(scene, camera)
       cube.rotation.y += speed
-      // this.controls.update()
+      controls.update()
     }
   },
   computed: {
