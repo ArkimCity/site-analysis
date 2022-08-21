@@ -20,6 +20,12 @@ export default {
 </script>
 
 <style>
+body {
+  margin: 0;
+  overflow: hidden;
+
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -51,5 +57,10 @@ export default {
   width: 300px;
   left: 0;
   top: 70px;
+}
+
+#map {
+  /* position: absolute; */
+  left: 300px;
 }
 </style>

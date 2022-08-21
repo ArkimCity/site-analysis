@@ -1,5 +1,5 @@
 <template>
-  <div ref='map'></div>
+  <div ref='map' id='map'></div>
 </template>
 
 <script>
@@ -16,11 +16,9 @@ smapleStartPoint = [parseFloat(smapleStartPoint[0]), parseFloat(smapleStartPoint
 
 // 각 기본 렌더링 사항 정의
 const scene = new THREE.Scene()
-// 카메라 설정
-// const width = window.innerWidth
-// const height = window.innerHeight
+// 카메라 설정 - OrthographicCamera
 // const camera = new THREE.OrthographicCamera(
-//   width / -2, width / 2, height / 2, height / -2, 1, 1000
+//   window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 1000
 // )
 
 const camera = new THREE.PerspectiveCamera(
@@ -40,7 +38,9 @@ export default {
   name: 'Map',
   data: function () {
     return {
-      mapData: mapData
+      mapData: mapData,
+      buildingMeshes: [],
+      buildingLines: []
     }
   },
   created: function () {
@@ -60,7 +60,7 @@ export default {
     // 카메라 위치/방향 업데이트
     camera.position.set(smapleStartPoint[0], smapleStartPoint[1], 1000)
     controls.target = new THREE.Vector3(smapleStartPoint[0], smapleStartPoint[1], 0)
-    scene.background = new THREE.Color('hsl(0, 100%, 100%)')
+    scene.background = new THREE.Color('rgb(0, 0, 0)')
     // controls.rotateSpeed = 1.0
     // controls.zoomSpeed = 5
     // controls.panSpeed = 0.8
@@ -70,6 +70,14 @@ export default {
   mounted: function () {
     this.$refs.map.appendChild(renderer.domElement)
     this.animate()
+  },
+  unmounted: function () {
+    this.buildingMeshes.forEach((element) => {
+      scene.remove(element)
+    })
+    this.buildingLines.forEach((element) => {
+      scene.remove(element)
+    })
   },
   methods: {
     animate: function () {
@@ -103,10 +111,12 @@ export default {
         })
         const mesh = new THREE.Mesh(geometry, material)
         scene.add(mesh)
+        this.buildingMeshes.push(mesh)
 
         const edges = new THREE.EdgesGeometry(geometry)
         const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffffff }))
         scene.add(line)
+        this.buildingLines.push(line)
       }
     }
   },

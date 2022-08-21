@@ -1,8 +1,6 @@
 <template>
   <div class="home">
-    <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
-    <Map id='Map'/>
+    <Map id='map'></Map>
   </div>
 </template>
 
@@ -14,8 +12,13 @@ import Map from '../components/Map.vue'
 export default {
   name: 'Home',
   components: {
-    // HelloWorld,
     Map
   }
 }
 </script>
+
+<style>
+#map {
+  top: 70px;
+}
+</style>
