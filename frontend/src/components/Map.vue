@@ -17,30 +17,22 @@ smapleStartPoint = [parseFloat(smapleStartPoint[0]), parseFloat(smapleStartPoint
 // 각 기본 렌더링 사항 정의
 const scene = new THREE.Scene()
 // 카메라 설정
-const width = window.innerWidth
-const height = window.innerHeight
-const camera = new THREE.OrthographicCamera(
-  width / -2, width / 2, height / 2, height / -2, 1, 1000
-)
-
-// const camera = new THREE.PerspectiveCamera(
-//   75,
-//   window.innerWidth / window.innerHeight,
-//   0.1,
-//   10000
+// const width = window.innerWidth
+// const height = window.innerHeight
+// const camera = new THREE.OrthographicCamera(
+//   width / -2, width / 2, height / 2, height / -2, 1, 1000
 // )
+
+const camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  10000
+)
 const renderer = new THREE.WebGLRenderer({
   antialias: true
 })
 const light = new THREE.DirectionalLight('hsl(0, 100%, 100%)')
-const geometry = new THREE.BoxGeometry(1, 1, 1)
-geometry.translate(smapleStartPoint[0] + 1, smapleStartPoint[1] + 1, 0)
-const material = new THREE.MeshStandardMaterial({
-  side: THREE.FrontSide,
-  color: 'hsl(0, 100%, 50%)',
-  wireframe: false
-})
-const cube = new THREE.Mesh(geometry, material)
 const axes = new THREE.AxesHelper(5)
 const controls = new OrbitControls(camera, renderer.domElement)
 
@@ -54,7 +46,6 @@ export default {
   created: function () {
     scene.add(camera)
     scene.add(light)
-    scene.add(cube)
 
     // const mapDataFeaturesTest = [mapData.features[0], mapData.features[1]]
 
@@ -65,7 +56,6 @@ export default {
     scene.add(axes)
     renderer.setSize(window.innerWidth, window.innerHeight)
     light.position.set(smapleStartPoint[0], smapleStartPoint[1], 100)
-    light.target = cube
 
     // 카메라 위치/방향 업데이트
     camera.position.set(smapleStartPoint[0], smapleStartPoint[1], 100)
