@@ -95,11 +95,8 @@ export default {
         const shape = new THREE.Shape()
         const coordsArray = coords[0]
 
-        const firstCoord = coordsArray.shift()
-        console.log(coordsArray)
-
-        shape.moveTo(firstCoord[0], firstCoord[0], 0)
-        coordsArray.forEach(element => {
+        shape.moveTo(coordsArray[0][0], coordsArray[0][1], 0)
+        coordsArray.slice(1).forEach(element => {
           shape.lineTo(element[0], element[1], 0)
         })
 
