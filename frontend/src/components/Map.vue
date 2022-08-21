@@ -103,6 +103,10 @@ export default {
         })
         const mesh = new THREE.Mesh(geometry, material)
         scene.add(mesh)
+
+        const edges = new THREE.EdgesGeometry(geometry)
+        const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffffff }))
+        scene.add(line)
       }
     }
   },
