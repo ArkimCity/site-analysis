@@ -32,7 +32,7 @@ const camera = new THREE.PerspectiveCamera(
 const renderer = new THREE.WebGLRenderer({
   antialias: true
 })
-const light = new THREE.DirectionalLight('hsl(0, 100%, 100%)')
+const light = new THREE.AmbientLight('hsl(0, 100%, 100%)')
 const axes = new THREE.AxesHelper(5)
 const controls = new OrbitControls(camera, renderer.domElement)
 
@@ -55,10 +55,10 @@ export default {
 
     scene.add(axes)
     renderer.setSize(window.innerWidth, window.innerHeight)
-    light.position.set(smapleStartPoint[0], smapleStartPoint[1], 100)
+    light.position.set(smapleStartPoint[0], smapleStartPoint[1], 1000)
 
     // 카메라 위치/방향 업데이트
-    camera.position.set(smapleStartPoint[0], smapleStartPoint[1], 100)
+    camera.position.set(smapleStartPoint[0], smapleStartPoint[1], 1000)
     controls.target = new THREE.Vector3(smapleStartPoint[0], smapleStartPoint[1], 0)
     scene.background = new THREE.Color('hsl(0, 100%, 100%)')
     // controls.rotateSpeed = 1.0
