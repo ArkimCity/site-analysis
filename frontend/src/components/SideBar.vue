@@ -1,5 +1,9 @@
 <template>
-<div id='sidebar'><Canvas id="canvas"/></div>
+<div id='sidebar'>
+  {{ this.$store.state.selectedBuilding }}
+  <br><br><br><br><br>
+  <Canvas id="canvas"></Canvas>
+</div>
 </template>
 
 <script>

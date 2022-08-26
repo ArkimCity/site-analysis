@@ -72,9 +72,13 @@ export default {
   },
   unmounted: function () {
     this.buildingMeshes.forEach((element) => {
+      element.geometry.dispose()
+      element.material.dispose()
       scene.remove(element)
     })
     this.buildingLines.forEach((element) => {
+      element.geometry.dispose()
+      element.material.dispose()
       scene.remove(element)
     })
   },
