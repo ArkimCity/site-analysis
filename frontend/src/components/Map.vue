@@ -135,9 +135,6 @@ export default {
           wireframe: false
         })
         const mesh = new THREE.Mesh(geometry, material)
-        mesh.raycast = function () {
-          console.log('raycast')
-        }
         scene.add(mesh)
         this.buildingMeshes.push(mesh)
 
