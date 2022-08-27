@@ -2,7 +2,9 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
-    selectedBuilding: { name: 'test' }
+    selectedBuilding: {
+      propertiesData: null
+    }
   },
   mutations: {
   },

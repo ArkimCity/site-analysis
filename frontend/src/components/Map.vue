@@ -54,7 +54,10 @@ export default {
     return {
       mapData: mapData,
       buildingMeshes: [],
-      buildingLines: []
+      buildingLines: [],
+      selectedBuildingMesh: {},
+      defaultMeshColor: 'hsl(0, 100%, 50%)',
+      selectedMeshColor: 'hsl(50, 100%, 50%)'
     }
   },
   created: function () {
@@ -105,15 +108,19 @@ export default {
       raycaster.setFromCamera(pointer, camera)
       // calculate objects intersecting the picking ray
       const intersects = raycaster.intersectObjects(scene.children)
+      if (this.$store.state.selectedBuilding.propertiesData) {
+        this.$store.state.selectedBuilding.material.color.set(this.defaultMeshColor)
+      }
       if (intersects.length > 0) {
         for (let i = 0; i < intersects.length; i++) {
-          if (intersects[0].object.type === 'Mesh') {
-            this.$store.state.selectedBuilding = intersects[0].object.propertiesData
+          if (intersects[i].object.type === 'Mesh') {
+            this.$store.state.selectedBuilding = intersects[i].object
+            this.$store.state.selectedBuilding.material.color.set(this.selectedMeshColor)
             break
           }
         }
       } else {
-        this.$store.state.selectedBuilding = null
+        this.$store.state.selectedBuilding = { propertiesData: null }
       }
 
       renderer.render(scene, camera)
@@ -145,7 +152,7 @@ export default {
         const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings)
         const material = new THREE.MeshStandardMaterial({
           side: THREE.FrontSide,
-          color: 'hsl(0, 100%, 50%)',
+          color: this.defaultMeshColor,
           wireframe: false
         })
         const mesh = new THREE.Mesh(geometry, material)
