@@ -16,9 +16,3 @@ export default {
   }
 }
 </script>
-
-<style>
-#map {
-  top: 70px;
-}
-</style>

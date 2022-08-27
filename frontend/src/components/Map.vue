@@ -5,6 +5,7 @@
 <script>
 // 필요 데이터 불러오기
 import mapData from '../assets/json/filtered_buildings_geojson.json'
+import { VRButton } from 'three/examples/jsm/webxr/VRButton.js'
 
 // 상수
 import consts from '../store/constants.js'
@@ -21,32 +22,31 @@ smapleStartPoint = [parseFloat(smapleStartPoint[0]), parseFloat(smapleStartPoint
 const scene = new THREE.Scene()
 // 카메라 설정 - OrthographicCamera
 // const camera = new THREE.OrthographicCamera(
-//   window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 1000
+//   window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 1000000
 // )
-
 const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  10000
+  75, window.innerWidth / window.innerHeight, 0.1, 10000
 )
 const renderer = new THREE.WebGLRenderer({
   antialias: true
 })
+renderer.xr.enabled = true
+document.body.appendChild(VRButton.createButton(renderer))
 const light = new THREE.AmbientLight('hsl(0, 100%, 100%)')
 const axes = new THREE.AxesHelper(5)
 const controls = new OrbitControls(camera, renderer.domElement)
 
 // 레이캐스터 추가
 const raycaster = new THREE.Raycaster()
+// THREE 마우스 포인터 정보
 const pointer = new THREE.Vector2()
 function onPointerMove (event) {
   // calculate pointer position in normalized device coordinates
   // (-1 to +1) for both components
-  pointer.x = (event.clientX / window.innerWidth) * 2 - 1
-  pointer.y = -(event.clientY / window.innerHeight) * 2 + 1
+  pointer.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1
+  pointer.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1
 }
-window.addEventListener('pointermove', onPointerMove)
+window.addEventListener('mousemove', onPointerMove)
 
 export default {
   name: 'Map',
@@ -62,19 +62,23 @@ export default {
     scene.add(light)
 
     // const mapDataFeaturesTest = [mapData.features[0], mapData.features[1]]
-
+    const group = new THREE.Group()
     mapData.features.forEach((element) => {
-      this.makeBuilding(scene, element)
+      this.makeBuilding(element, group)
     })
-
+    scene.add(group)
     scene.add(axes)
     renderer.setSize(window.innerWidth, window.innerHeight)
-    light.position.set(smapleStartPoint[0], smapleStartPoint[1], 1000)
-
+    window.addEventListener('resize', this.onResize, false)
     // 카메라 위치/방향 업데이트
-    camera.position.set(smapleStartPoint[0], smapleStartPoint[1], 1000)
-    controls.target = new THREE.Vector3(smapleStartPoint[0], smapleStartPoint[1], 0)
-    controls.enableRotate = false
+    // light.position.set(smapleStartPoint[0], smapleStartPoint[1], 1000)
+    // camera.position.set(smapleStartPoint[0], smapleStartPoint[1], 1000)
+    light.position.set(0, 0, 1000)
+    camera.position.set(0, 0, 1000)
+    group.position.set(-smapleStartPoint[0], -smapleStartPoint[1], -100)
+    console.log(group.position)
+    controls.target = new THREE.Vector3(0, 0, 0)
+    // controls.enableRotate = false
     scene.background = new THREE.Color('rgb(100, 100, 100)')
   },
   mounted: function () {
@@ -95,22 +99,32 @@ export default {
   },
   methods: {
     animate: function () {
-      requestAnimationFrame(this.animate)
+      renderer.setAnimationLoop(this.animate)
 
       // update the picking ray with the camera and pointer position
       raycaster.setFromCamera(pointer, camera)
-
       // calculate objects intersecting the picking ray
       const intersects = raycaster.intersectObjects(scene.children)
-
-      for (let i = 0; i < intersects.length; i++) {
-        intersects[i].object.material.color.set(0x000000)
+      if (intersects.length > 0) {
+        for (let i = 0; i < intersects.length; i++) {
+          if (intersects[0].object.type === 'Mesh') {
+            this.$store.state.selectedBuilding = intersects[0].object.propertiesData
+            break
+          }
+        }
+      } else {
+        this.$store.state.selectedBuilding = null
       }
 
       renderer.render(scene, camera)
       controls.update()
     },
-    makeBuilding: function (scene, data) {
+    onResize: function () {
+      camera.aspect = window.innerWidth / window.innerHeight
+      camera.updateProjectionMatrix()
+      renderer.setSize(window.innerWidth, window.innerHeight)
+    },
+    makeBuilding: function (data, group) {
       const coords = data.geometry.coordinates
       const height = data.properties[consts.columns['높이']]
 
@@ -135,13 +149,32 @@ export default {
           wireframe: false
         })
         const mesh = new THREE.Mesh(geometry, material)
-        scene.add(mesh)
+        mesh.propertiesData = data.properties
+        group.add(mesh)
         this.buildingMeshes.push(mesh)
 
         const edges = new THREE.EdgesGeometry(geometry)
         const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffffff }))
-        scene.add(line)
+        line.testData = 'line'
+        group.add(line)
         this.buildingLines.push(line)
+      }
+    },
+    resizeCanvasToDisplaySize: function () {
+      const canvas = renderer.domElement
+      // look up the size the canvas is being displayed
+      const width = window.innerWidth
+      const height = window.innerHeight
+
+      // adjust displayBuffer size to match
+      if (canvas.width !== width || canvas.height !== height) {
+        // you must pass false here or three.js sadly fights the browser
+        renderer.setSize(width, height, false)
+        camera.aspect = width / height
+        camera.updateProjectionMatrix()
+
+        // update any render target sizes here
+        this.resizeCanvasToDisplaySize()
       }
     }
   },

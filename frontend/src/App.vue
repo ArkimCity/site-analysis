@@ -1,10 +1,7 @@
 <template>
   <div>
     <SideBar id="sidebar"/>
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+    <div id="nav"></div>
     <router-view/>
   </div>
 </template>
@@ -35,10 +32,13 @@ body {
 }
 
 #nav {
+  position: absolute;
+  width: 100%;
   order: 2;
   background-color: #5a748f;
   height: 60px;
   top: 0;
+  opacity: 0.7;
 }
 
 #nav a {
