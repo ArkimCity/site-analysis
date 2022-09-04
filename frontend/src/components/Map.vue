@@ -15,8 +15,9 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 let smapleStartPoint = mapData.features[0].geometry.coordinates[0][0]
-smapleStartPoint = [parseFloat(smapleStartPoint[0]), parseFloat(smapleStartPoint[1])]
-// const smapleStartPoint = [100, 100]
+// smapleStartPoint = [parseFloat(smapleStartPoint[0]), parseFloat(smapleStartPoint[1])]
+smapleStartPoint = [188012.96300000045, 444827.6070000008]
+console.log(smapleStartPoint)
 
 // 각 기본 렌더링 사항 정의
 const scene = new THREE.Scene()
