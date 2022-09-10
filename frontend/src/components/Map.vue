@@ -4,7 +4,7 @@
 
 <script>
 // 필요 데이터 불러오기
-import mapData from '../assets/json/building_data_divided/190254.30242000028_444530.95859000046_190656.1508800003_444829.27176000044.json'
+import mapData from '../assets/json/building_data_divided/199496.81700000027_451392.1615000004_203515.30160000027_454375.29320000036.json'
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js'
 
 // 상수
@@ -15,8 +15,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 let smapleStartPoint = mapData.features[0].geometry.coordinates[0][0]
-// smapleStartPoint = [parseFloat(smapleStartPoint[0]), parseFloat(smapleStartPoint[1])]
-smapleStartPoint = [188012.96300000045, 444827.6070000008]
+smapleStartPoint = [parseFloat(smapleStartPoint[0]), parseFloat(smapleStartPoint[1])]
 console.log(smapleStartPoint)
 
 // 각 기본 렌더링 사항 정의
