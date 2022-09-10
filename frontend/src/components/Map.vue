@@ -134,8 +134,10 @@ export default {
     },
     makeBuilding: function (data, group) {
       const coords = data.geometry.coordinates
-      const height = data.properties[consts.columns['높이']]
-
+      let height = 1
+      if (data.properties[consts.columns['높이']] !== 0) {
+        height = data.properties[consts.columns['높이']]
+      }
       if (data.geometry.type === 'Polygon' && height && data.geometry.coordinates.length > 0) {
         const shape = new THREE.Shape()
         const coordsArray = coords[0]
