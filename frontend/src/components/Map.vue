@@ -5,7 +5,7 @@
 <script>
 // 필요 데이터 불러오기
 import mapData from '../assets/json/building_data_divided/181815.4847600003_453778.6668600004_182619.1816800003_454375.29320000036.json'
-import { VRButton } from 'three/examples/jsm/webxr/VRButton.js'
+// import { VRButton } from 'three/examples/jsm/webxr/VRButton.js'
 
 // 상수
 import consts from '../store/constants.js'
@@ -31,7 +31,7 @@ const renderer = new THREE.WebGLRenderer({
   antialias: true
 })
 renderer.xr.enabled = true
-document.body.appendChild(VRButton.createButton(renderer))
+// document.body.appendChild(VRButton.createButton(renderer))
 const light = new THREE.AmbientLight('hsl(0, 100%, 100%)')
 const axes = new THREE.AxesHelper(5)
 const controls = new OrbitControls(camera, renderer.domElement)
