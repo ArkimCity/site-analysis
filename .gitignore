@@ -75,5 +75,4 @@ typings/
 # FuseBox cache
 .fusebox/
 frontend/package-lock.json
-data_processing/AL_11_D010_20220702.json
-data_processing/AL_11_D002_20220702.json
+data_processing/*.json
