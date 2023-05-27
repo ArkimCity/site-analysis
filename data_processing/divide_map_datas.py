@@ -14,6 +14,7 @@ https://mapshaper.org/
 import json
 import os
 import math
+import shutil
 
 
 DIVISION_NUMBER = 50
@@ -99,8 +100,13 @@ if __name__ == "__main__":
                 break
 
     # 분할된 건물 데이터 폴더 생성
-    building_data_divided_folder_path = os.path.join(os.path.abspath(__file__), "..", "building_data_divided")
+    building_data_divided_folder_path = os.path.join(os.path.abspath(__file__), "..", "..", "frontend/src/assets/json/building_data_divided")
     if not os.path.exists(building_data_divided_folder_path):
+        # 없을 경우 새로 생성
+        os.mkdir(building_data_divided_folder_path)
+    else:
+        # 파일 교체
+        shutil.rmtree(building_data_divided_folder_path)
         os.mkdir(building_data_divided_folder_path)
 
     for loc_key in divided_map_data:
