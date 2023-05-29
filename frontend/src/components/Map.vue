@@ -51,7 +51,6 @@ fetch(landDataRequestUrl).then(response => {
     for (let i = 0; i < coordsAll.length; i += 2) {
       coords.push([coordsAll[i], coordsAll[i + 1]])
     }
-    console.log(coords)
     const pnuString = parcel.childNodes[0].childNodes[1].childNodes[0].nodeValue
     return { coords, pnuString }
   })
