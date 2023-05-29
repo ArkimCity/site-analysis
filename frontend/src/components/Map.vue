@@ -18,46 +18,38 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 let smapleStartPoint = mapData.features[0].geometry.coordinates[0][0]
 smapleStartPoint = [parseFloat(smapleStartPoint[0]), parseFloat(smapleStartPoint[1])]
 
-const landDataUrl = 'https://apis.data.go.kr/1611000/nsdi/LandCharacteristicsService/wfs/getLandCharacteristicsWFS'
-const params = {
-  serviceKey: 'LhVMAvf7G82KFeNYzgE28ylo5LVFxX6K%2F2XBtOGTyFbcIzWgF3UKcafqjFyKtZIOIsZDrK9ItETvlAlHait3sg%3D%3D',
+const dataUrl = 'https://apis.data.go.kr/1611000/nsdi'
+const serviceKey = 'LhVMAvf7G82KFeNYzgE28ylo5LVFxX6K%2F2XBtOGTyFbcIzWgF3UKcafqjFyKtZIOIsZDrK9ItETvlAlHait3sg%3D%3D'
+
+const landDataRequestParams = {
+  serviceKey: serviceKey,
   typeName: 'F251',
   bbox: '217970,447107,218515,447524',
-  pnu: '414501170010186',
+  // pnu: '414501170010186',
   maxFeatures: '10',
   srsName: 'EPSG:5174',
   resultType: 'results'
 }
-
-let landDataRequestUrl = landDataUrl + '?'
-Object.keys(params).forEach((key) => {
-  landDataRequestUrl += key + '=' + params[key] + '&'
+let landDataRequestUrl = dataUrl + '/LandCharacteristicsService/wfs/getLandCharacteristicsWFS?'
+Object.keys(landDataRequestParams).forEach((key) => {
+  landDataRequestUrl += key + '=' + landDataRequestParams[key] + '&'
 })
 
-fetch(landDataRequestUrl).then(response => {
-  return response.text()
-}).then((data) => {
-  const parser = new DOMParser()
-  const xml = parser.parseFromString(data, 'text/xml')
-  const parsed = toJSON(xml)
-
-  const parcels = parsed.childNodes[0].childNodes.map((parcel) => {
-    const coordsString = parcel.childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].nodeValue
-    const coordsAll = coordsString.split(' ').map(coordString => {
-      return parseFloat(coordString)
-    })
-
-    const coords = []
-    for (let i = 0; i < coordsAll.length; i += 2) {
-      coords.push([coordsAll[i], coordsAll[i + 1]])
-    }
-    const pnuString = parcel.childNodes[0].childNodes[1].childNodes[0].nodeValue
-    return { coords, pnuString }
-  })
-  console.log(parcels)
-}).catch(err => {
-  console.log(err)
+const buildingDataRequestParams = {
+  serviceKey: serviceKey,
+  typeName: 'F171',
+  bbox: '197977.042,451073.098,198432.41,451515.861',
+  // pnu: '1114011400102500000',
+  maxFeatures: '10',
+  srsName: 'EPSG:5174',
+  resultType: 'results'
+}
+let buildingDataRequestUrl = 'https://apis.data.go.kr/1611000/nsdi/GisBuildingService/wfs/getGisGnrlBuildingWFS?'
+Object.keys(buildingDataRequestParams).forEach((key) => {
+  buildingDataRequestUrl += key + '=' + buildingDataRequestParams[key] + '&'
 })
+console.log(buildingDataRequestUrl)
+
 // 각 기본 렌더링 사항 정의
 const scene = new THREE.Scene()
 // 카메라 설정 - OrthographicCamera
@@ -127,6 +119,8 @@ export default {
   mounted: function () {
     this.$refs.map.appendChild(renderer.domElement)
     this.animate()
+    this.setGeoPnuDataWithUrl(landDataRequestUrl, undefined, 'parcel')
+    this.setGeoPnuDataWithUrl(buildingDataRequestUrl, undefined, 'building')
   },
   unmounted: function () {
     this.buildingMeshes.forEach((element) => {
@@ -225,6 +219,49 @@ export default {
         // update any render target sizes here
         this.resizeCanvasToDisplaySize()
       }
+    },
+    setGeoPnuDataWithUrl: function (url, dataToSet, mode) {
+      fetch(url).then(response => {
+        return response.text()
+      }).then((data) => {
+        const parser = new DOMParser()
+        const xml = parser.parseFromString(data, 'text/xml')
+        const parsed = toJSON(xml)
+
+        const geoPnuDataSet = []
+        parsed.childNodes[0].childNodes.forEach((parcel) => {
+          if (mode === 'building' && parcel.tagName !== 'gml:featuremember') {
+          } else {
+            let coordsString = ''
+            if (mode === 'parcel') {
+              coordsString = parcel.childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].nodeValue
+            } else if (mode === 'building') {
+              coordsString = parcel.childNodes[1].childNodes[1].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].nodeValue
+            }
+
+            const coordsAll = coordsString.split(' ').map(coordString => {
+              return parseFloat(coordString)
+            })
+
+            const coords = []
+            for (let i = 0; i < coordsAll.length; i += 2) {
+              coords.push([coordsAll[i], coordsAll[i + 1]])
+            }
+
+            let pnuString = ''
+            if (mode === 'parcel') {
+              pnuString = parcel.childNodes[0].childNodes[1].childNodes[0].nodeValue
+            } else if (mode === 'building') {
+              pnuString = parcel.childNodes[1].childNodes[5].childNodes[0].nodeValue
+            }
+            geoPnuDataSet.push({ coords, pnuString })
+          }
+        })
+        console.log(geoPnuDataSet)
+        dataToSet = geoPnuDataSet
+      }).catch(err => {
+        console.log(err)
+      })
     }
   },
   computed: {
