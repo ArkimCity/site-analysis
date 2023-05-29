@@ -39,7 +39,23 @@ fetch(landDataRequestUrl).then(response => {
 }).then((data) => {
   const parser = new DOMParser()
   const xml = parser.parseFromString(data, 'text/xml')
-  console.log(toJSON(xml))
+  const parsed = toJSON(xml)
+
+  const parcels = parsed.childNodes[0].childNodes.map((parcel) => {
+    const coordsString = parcel.childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].childNodes[0].nodeValue
+    const coordsAll = coordsString.split(' ').map(coordString => {
+      return parseFloat(coordString)
+    })
+
+    const coords = []
+    for (let i = 0; i < coordsAll.length; i += 2) {
+      coords.push([coordsAll[i], coordsAll[i + 1]])
+    }
+    console.log(coords)
+    const pnuString = parcel.childNodes[0].childNodes[1].childNodes[0].nodeValue
+    return { coords, pnuString }
+  })
+  console.log(parcels)
 }).catch(err => {
   console.log(err)
 })
