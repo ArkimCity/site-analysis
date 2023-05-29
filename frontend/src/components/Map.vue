@@ -4,7 +4,8 @@
 
 <script>
 // 필요 데이터 불러오기
-import mapData from '../assets/json/building_data_divided/181815.4847600003_453778.6668600004_182619.1816800003_454375.29320000036.json'
+import mapData from '../assets/json/filtered_buildings_geojson.json'
+import { toJSON } from 'dom-to-json'
 // import { VRButton } from 'three/examples/jsm/webxr/VRButton.js'
 
 // 상수
@@ -16,8 +17,32 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 let smapleStartPoint = mapData.features[0].geometry.coordinates[0][0]
 smapleStartPoint = [parseFloat(smapleStartPoint[0]), parseFloat(smapleStartPoint[1])]
-console.log(smapleStartPoint)
 
+const landDataUrl = 'https://apis.data.go.kr/1611000/nsdi/LandCharacteristicsService/wfs/getLandCharacteristicsWFS'
+const params = {
+  serviceKey: 'LhVMAvf7G82KFeNYzgE28ylo5LVFxX6K%2F2XBtOGTyFbcIzWgF3UKcafqjFyKtZIOIsZDrK9ItETvlAlHait3sg%3D%3D',
+  typeName: 'F251',
+  bbox: '217970,447107,218515,447524',
+  pnu: '414501170010186',
+  maxFeatures: '10',
+  srsName: 'EPSG:5174',
+  resultType: 'results'
+}
+
+let landDataRequestUrl = landDataUrl + '?'
+Object.keys(params).forEach((key) => {
+  landDataRequestUrl += key + '=' + params[key] + '&'
+})
+
+fetch(landDataRequestUrl).then(response => {
+  return response.text()
+}).then((data) => {
+  const parser = new DOMParser()
+  const xml = parser.parseFromString(data, 'text/xml')
+  console.log(toJSON(xml))
+}).catch(err => {
+  console.log(err)
+})
 // 각 기본 렌더링 사항 정의
 const scene = new THREE.Scene()
 // 카메라 설정 - OrthographicCamera
