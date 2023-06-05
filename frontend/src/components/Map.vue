@@ -18,7 +18,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 let smapleStartPoint = mapData.features[0].geometry.coordinates[0][0]
 smapleStartPoint = [parseFloat(smapleStartPoint[0]), parseFloat(smapleStartPoint[1])]
 
-const dataUrl = 'https://apis.data.go.kr/1611000/nsdi'
 const serviceKey = 'LhVMAvf7G82KFeNYzgE28ylo5LVFxX6K%2F2XBtOGTyFbcIzWgF3UKcafqjFyKtZIOIsZDrK9ItETvlAlHait3sg%3D%3D'
 
 const landDataRequestParams = {
@@ -30,7 +29,7 @@ const landDataRequestParams = {
   srsName: 'EPSG:5174',
   resultType: 'results'
 }
-let landDataRequestUrl = dataUrl + '/LandCharacteristicsService/wfs/getLandCharacteristicsWFS?'
+let landDataRequestUrl = 'https://apis.data.go.kr/1611000/nsdi/LandCharacteristicsService/wfs/getLandCharacteristicsWFS?'
 Object.keys(landDataRequestParams).forEach((key) => {
   landDataRequestUrl += key + '=' + landDataRequestParams[key] + '&'
 })
