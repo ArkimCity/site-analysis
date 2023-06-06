@@ -25,7 +25,7 @@ const landDataRequestParams = {
   typeName: 'F251',
   bbox: '217970,447107,218515,447524',
   // pnu: '414501170010186',
-  maxFeatures: '10',
+  maxFeatures: '100',
   srsName: 'EPSG:5174',
   resultType: 'results'
 }
@@ -37,9 +37,10 @@ Object.keys(landDataRequestParams).forEach((key) => {
 const buildingDataRequestParams = {
   serviceKey: serviceKey,
   typeName: 'F171',
-  bbox: '197977.042,451073.098,198432.41,451515.861',
+  bbox: '217970,447107,218515,447524',
+  // bbox: '197977.042,451073.098,198432.41,451515.861',
   // pnu: '1114011400102500000',
-  maxFeatures: '10',
+  maxFeatures: '100',
   srsName: 'EPSG:5174',
   resultType: 'results'
 }
@@ -47,7 +48,6 @@ let buildingDataRequestUrl = 'https://apis.data.go.kr/1611000/nsdi/GisBuildingSe
 Object.keys(buildingDataRequestParams).forEach((key) => {
   buildingDataRequestUrl += key + '=' + buildingDataRequestParams[key] + '&'
 })
-console.log(buildingDataRequestUrl)
 
 // 각 기본 렌더링 사항 정의
 const scene = new THREE.Scene()
