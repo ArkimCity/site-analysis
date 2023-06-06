@@ -4,19 +4,15 @@
 
 <script>
 // 필요 데이터 불러오기
-import mapData from '../assets/json/filtered_buildings_geojson.json'
 import { toJSON } from 'dom-to-json'
 // import { VRButton } from 'three/examples/jsm/webxr/VRButton.js'
 
 // 상수
-import consts from '../store/constants.js'
+// import consts from '../store/constants.js'
 
 // import { Clock, PerspectiveCamera, Scene, WebGLRenderer } from 'three'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-
-let smapleStartPoint = mapData.features[0].geometry.coordinates[0][0]
-smapleStartPoint = [parseFloat(smapleStartPoint[0]), parseFloat(smapleStartPoint[1])]
 
 const serviceKey = 'LhVMAvf7G82KFeNYzgE28ylo5LVFxX6K%2F2XBtOGTyFbcIzWgF3UKcafqjFyKtZIOIsZDrK9ItETvlAlHait3sg%3D%3D'
 
@@ -83,7 +79,6 @@ export default {
   name: 'Map',
   data: function () {
     return {
-      mapData: mapData,
       buildingMeshes: [],
       buildingLines: [],
       selectedBuildingMesh: {},
@@ -94,26 +89,14 @@ export default {
   created: function () {
     scene.add(camera)
     scene.add(light)
-
-    // const mapDataFeaturesTest = [mapData.features[0], mapData.features[1]]
-    const group = new THREE.Group()
-    mapData.features.forEach((element) => {
-      this.makeBuilding(element, group)
-    })
-    scene.add(group)
     scene.add(axes)
     renderer.setSize(window.innerWidth, window.innerHeight)
     window.addEventListener('resize', this.onResize, false)
-    // 카메라 위치/방향 업데이트
-    // light.position.set(smapleStartPoint[0], smapleStartPoint[1], 1000)
-    // camera.position.set(smapleStartPoint[0], smapleStartPoint[1], 1000)
     light.position.set(0, 0, 1000)
     camera.position.set(0, 0, 1000)
-    group.position.set(-smapleStartPoint[0], -smapleStartPoint[1], -100)
-    console.log(group.position)
     controls.target = new THREE.Vector3(0, 0, 0)
-    // controls.enableRotate = false
     scene.background = new THREE.Color('rgb(100, 100, 100)')
+    // controls.enableRotate = false
   },
   mounted: function () {
     this.$refs.map.appendChild(renderer.domElement)
@@ -165,14 +148,16 @@ export default {
       renderer.setSize(window.innerWidth, window.innerHeight)
     },
     makeBuilding: function (data, group) {
-      const coords = data.geometry.coordinates
+      // data = {coords, pnuString}
+
+      const coordsArray = data.coords
       let height = 1
-      if (data.properties[consts.columns['높이']] !== 0) {
-        height = data.properties[consts.columns['높이']]
+      if (data.height && data.height !== 0) {
+        height = data.height
       }
-      if (data.geometry.type === 'Polygon' && height && data.geometry.coordinates.length > 0) {
+
+      if (coordsArray.length > 0) {
         const shape = new THREE.Shape()
-        const coordsArray = coords[0]
 
         shape.moveTo(coordsArray[0][0], coordsArray[0][1], 0)
         coordsArray.slice(1).forEach(element => {
@@ -191,7 +176,7 @@ export default {
           wireframe: false
         })
         const mesh = new THREE.Mesh(geometry, material)
-        mesh.propertiesData = data.properties
+        mesh.propertiesData = { pnuString: data.pnuString }
         group.add(mesh)
         this.buildingMeshes.push(mesh)
 
@@ -256,6 +241,13 @@ export default {
             geoPnuDataSet.push({ coords, pnuString })
           }
         })
+        const group = new THREE.Group()
+        geoPnuDataSet.forEach((element) => {
+          this.makeBuilding(element, group)
+        })
+        scene.add(group)
+        group.position.set(-geoPnuDataSet[0].coords[0][0], -geoPnuDataSet[0].coords[0][1], -100)
+
         console.log(geoPnuDataSet)
         dataToSet = geoPnuDataSet
       }).catch(err => {
