@@ -1,7 +1,7 @@
 <template>
 <div id='sidebar'>
   <Canvas id="canvas"></Canvas><br>
-  {{ this.$store.state.selectedBuilding.propertiesData }}
+  {{ this.$store.state.selectedGeo.propertiesData }}
 </div>
 </template>
 

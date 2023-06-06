@@ -81,8 +81,8 @@ export default {
     return {
       buildingMeshes: [],
       buildingLines: [],
-      selectedBuildingMesh: {},
       defaultMeshColor: 'hsl(0, 100%, 50%)',
+      defaultParcelColor: 'hsl(80, 80%, 80%)',
       selectedMeshColor: 'hsl(50, 100%, 50%)'
     }
   },
@@ -101,8 +101,12 @@ export default {
   mounted: function () {
     this.$refs.map.appendChild(renderer.domElement)
     this.animate()
-    this.setGeoPnuDataWithUrl(landDataRequestUrl, undefined, 'parcel')
-    this.setGeoPnuDataWithUrl(buildingDataRequestUrl, undefined, 'building')
+
+    // pnu 로 처음에 요청한 뒤에 거기서 가져와야 합니다
+    const centerPoint = [218107.42, 447343.494]
+
+    this.setGeoPnuDataWithUrl(landDataRequestUrl, centerPoint, 'parcel')
+    this.setGeoPnuDataWithUrl(buildingDataRequestUrl, centerPoint, 'building')
   },
   unmounted: function () {
     this.buildingMeshes.forEach((element) => {
@@ -124,19 +128,31 @@ export default {
       raycaster.setFromCamera(pointer, camera)
       // calculate objects intersecting the picking ray
       const intersects = raycaster.intersectObjects(scene.children)
-      if (this.$store.state.selectedBuilding.propertiesData) {
-        this.$store.state.selectedBuilding.material.color.set(this.defaultMeshColor)
+      if (this.$store.state.selectedGeo.propertiesData) {
+        this.$store.state.selectedGeo.material.color.set(
+          this.$store.state.selectedGeo.propertiesData.geoType === 'parcel' ? this.defaultParcelColor : this.defaultMeshColor
+        )
       }
+      // if (this.$store.state.selectedGeo.propertiesData) {
+      //   console.log(this.$store.state.selectedGeo)
+      //   console.log(this.$store.state.selectedGeo.propertiesData.geoType)
+
+      //   if (this.$store.state.selectedGeo.propertiesData.geoType === 'parcel') {
+      //     this.$store.state.selectedGeo.material.color.set(this.defaultParcelColor)
+      //   } else if (this.$store.state.selectedGeo.propertiesData.geoType === 'building') {
+      //     this.$store.state.selectedGeo.material.color.set(this.defaultMeshColor)
+      //   }
+      // }
       if (intersects.length > 0) {
         for (let i = 0; i < intersects.length; i++) {
           if (intersects[i].object.type === 'Mesh') {
-            this.$store.state.selectedBuilding = intersects[i].object
-            this.$store.state.selectedBuilding.material.color.set(this.selectedMeshColor)
+            this.$store.state.selectedGeo = intersects[i].object
+            this.$store.state.selectedGeo.material.color.set(this.selectedMeshColor)
             break
           }
         }
       } else {
-        this.$store.state.selectedBuilding = { propertiesData: null }
+        this.$store.state.selectedGeo = { propertiesData: null }
       }
 
       renderer.render(scene, camera)
@@ -147,7 +163,7 @@ export default {
       camera.updateProjectionMatrix()
       renderer.setSize(window.innerWidth, window.innerHeight)
     },
-    makeBuilding: function (data, group) {
+    makeExtrudes: function (data, group, mode) {
       // data = {coords, pnuString}
 
       const coordsArray = data.coords
@@ -170,13 +186,19 @@ export default {
         }
 
         const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings)
+        if (mode === 'parcel') {
+          geometry.translate(0, 0, -1)
+        }
         const material = new THREE.MeshStandardMaterial({
           side: THREE.FrontSide,
-          color: this.defaultMeshColor,
+          color: mode === 'parcel' ? this.defaultParcelColor : this.defaultMeshColor,
           wireframe: false
         })
         const mesh = new THREE.Mesh(geometry, material)
-        mesh.propertiesData = { pnuString: data.pnuString }
+        mesh.propertiesData = {
+          pnuString: data.pnuString,
+          geoType: mode
+        }
         group.add(mesh)
         this.buildingMeshes.push(mesh)
 
@@ -204,7 +226,7 @@ export default {
         this.resizeCanvasToDisplaySize()
       }
     },
-    setGeoPnuDataWithUrl: function (url, dataToSet, mode) {
+    setGeoPnuDataWithUrl: function (url, centerPoint, mode) {
       fetch(url).then(response => {
         return response.text()
       }).then((data) => {
@@ -241,15 +263,16 @@ export default {
             geoPnuDataSet.push({ coords, pnuString })
           }
         })
+
+        // 그룹화 해서 scene 에 추가
         const group = new THREE.Group()
         geoPnuDataSet.forEach((element) => {
-          this.makeBuilding(element, group)
+          this.makeExtrudes(element, group, mode)
         })
         scene.add(group)
-        group.position.set(-geoPnuDataSet[0].coords[0][0], -geoPnuDataSet[0].coords[0][1], -100)
 
-        console.log(geoPnuDataSet)
-        dataToSet = geoPnuDataSet
+        // centralize
+        group.position.set(-centerPoint[0], -centerPoint[1], -100)
       }).catch(err => {
         console.log(err)
       })
