@@ -133,16 +133,7 @@ export default {
           this.$store.state.selectedGeo.propertiesData.geoType === 'parcel' ? this.defaultParcelColor : this.defaultMeshColor
         )
       }
-      // if (this.$store.state.selectedGeo.propertiesData) {
-      //   console.log(this.$store.state.selectedGeo)
-      //   console.log(this.$store.state.selectedGeo.propertiesData.geoType)
 
-      //   if (this.$store.state.selectedGeo.propertiesData.geoType === 'parcel') {
-      //     this.$store.state.selectedGeo.material.color.set(this.defaultParcelColor)
-      //   } else if (this.$store.state.selectedGeo.propertiesData.geoType === 'building') {
-      //     this.$store.state.selectedGeo.material.color.set(this.defaultMeshColor)
-      //   }
-      // }
       if (intersects.length > 0) {
         for (let i = 0; i < intersects.length; i++) {
           if (intersects[i].object.type === 'Mesh') {
