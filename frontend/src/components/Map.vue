@@ -4,7 +4,8 @@
 
 <script>
 // 필요 데이터 불러오기
-import mapData from '../assets/json/building_data_divided/181815.4847600003_453778.6668600004_182619.1816800003_454375.29320000036.json'
+// import mapData from '../assets/json/building_data_divided/181815.4847600003_453778.6668600004_182619.1816800003_454375.29320000036.json'
+import mapData from '../assets/json/filtered_buildings_geojson.json'
 // import { VRButton } from 'three/examples/jsm/webxr/VRButton.js'
 
 // 상수
