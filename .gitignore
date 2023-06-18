@@ -76,3 +76,4 @@ typings/
 .fusebox/
 frontend/package-lock.json
 data_processing/*.json
+frontend/package-lock.json
