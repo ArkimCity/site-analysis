@@ -8,7 +8,11 @@ http://openapi.nsdi.go.kr/nsdi/eios/OpenapiList.do?provOrg=NIA&gubun=F
 
 - 데이터 원본 geojson 으로 변환
 https://mapshaper.org/
+
+- import 시
     - encoding=euc-kr
+- import 이후 console 에서 lat long 으로 변환하고 싶을 시
+    - -proj wgs84
 """
 
 import json
