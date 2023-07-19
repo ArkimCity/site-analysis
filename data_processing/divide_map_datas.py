@@ -122,6 +122,6 @@ if __name__ == "__main__":
         with open(os.path.join(building_data_divided_folder_path, file_name), "w", encoding="utf-8") as f:
             json.dump(divided_map_data[loc_key], f)
     
-    with open(os.path.join(building_data_divided_folder_path, "0_files_info.json"), "w", encoding="utf-8") as f:
+    with open(os.path.join(building_data_divided_folder_path, "..", "building_files_info.json"), "w", encoding="utf-8") as f:
         json.dump(file_name_json, f)
     
