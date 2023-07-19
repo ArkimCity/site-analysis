@@ -7,6 +7,9 @@ export default createStore({
     }
   },
   mutations: {
+    setSelectedBuilding (state, building) {
+      state.selectedBuilding = building
+    }
   },
   actions: {
   },

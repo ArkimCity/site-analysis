@@ -61,6 +61,46 @@ export default {
       renderer.render(scene, camera)
       // cube.rotation.y += speed
       // this.controls.update()
+    },
+    setBuilding: function (newValue) {
+      // Remove all other meshes from the scene and dispose them
+      scene.children.forEach((child) => {
+        if (child !== newValue && child.type === 'Mesh') {
+          scene.remove(child)
+          // Dispose of the geometry and material to free up memory
+          child.geometry.dispose()
+          child.material.dispose()
+        }
+      })
+
+      console.log(newValue)
+
+      if (newValue.propertiesData) {
+        const box = newValue.clone()
+        scene.add(box)
+
+        // Calculate the bounding box of the box object
+        const boundingBox = new THREE.Box3().setFromObject(box)
+
+        // Calculate the center of the bounding box
+        const center = boundingBox.getCenter(new THREE.Vector3())
+
+        // Get the size of the bounding box
+        const size = boundingBox.getSize(new THREE.Vector3())
+
+        // Calculate the position for the camera
+        const multiples = 1.1
+        const cameraX = center.x
+        const cameraY = center.y
+        const cameraZ = center.z + Math.max(size.x, size.y, size.z) * multiples
+
+        // Set the camera position and look at the center of the bounding box
+        camera.position.set(cameraX, cameraY, cameraZ)
+        camera.lookAt(center)
+
+        // Set the light position
+        light.position.set(cameraX, cameraY, cameraZ)
+      }
     }
   },
   computed: {
@@ -74,45 +114,8 @@ export default {
     ...mapState(['selectedBuilding'])
   },
   watch: {
-    selectedBuilding: function (newValue, oldValue) {
-      // Remove all other meshes from the scene and dispose them
-      scene.children.forEach((child) => {
-        if (child !== newValue && child.type === "Mesh") {
-          scene.remove(child);
-          // Dispose of the geometry and material to free up memory
-          child.geometry.dispose();
-          child.material.dispose();
-        }
-      });
-
-      console.log(newValue);
-
-      if (newValue.propertiesData) {
-        const box = newValue.clone();
-        scene.add(box);
-
-        // Calculate the bounding box of the box object
-        const boundingBox = new THREE.Box3().setFromObject(box);
-
-        // Calculate the center of the bounding box
-        const center = boundingBox.getCenter(new THREE.Vector3());
-
-        // Get the size of the bounding box
-        const size = boundingBox.getSize(new THREE.Vector3());
-
-        // Calculate the position for the camera
-        const multiples = 1.1
-        const cameraX = center.x;
-        const cameraY = center.y;
-        const cameraZ = center.z + Math.max(size.x, size.y, size.z) * multiples;
-
-        // Set the camera position and look at the center of the bounding box
-        camera.position.set(cameraX, cameraY, cameraZ);
-        camera.lookAt(center);
-
-        // Set the light position
-        light.position.set(cameraX, cameraY, cameraZ);
-      }
+    selectedBuilding: function (newVal, oldVal) {
+      this.setBuilding(newVal)
     }
   }
 }

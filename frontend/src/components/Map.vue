@@ -115,7 +115,7 @@ export default {
       if (intersects.length > 0) {
         for (let i = 0; i < intersects.length; i++) {
           if (intersects[i].object.type === 'Mesh') {
-            this.$store.state.selectedBuilding = intersects[i].object
+            this.$store.commit('setSelectedBuilding', intersects[i].object)
             this.$store.state.selectedBuilding.material.color.set(this.selectedMeshColor)
             break
           }
