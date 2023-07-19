@@ -38,7 +38,6 @@ export default {
     }
   },
   created: function () {
-    this.$watch('$store.state.selectedBuilding', this.handleSelectedBuildingChange, { deep: true });
     scene.add(camera)
     scene.add(light)
     scene.add(axes)
@@ -92,8 +91,6 @@ export default {
         const box = newValue.clone();
         scene.add(box);
 
-        console.log("box added");
-
         // Calculate the bounding box of the box object
         const boundingBox = new THREE.Box3().setFromObject(box);
 
@@ -104,16 +101,17 @@ export default {
         const size = boundingBox.getSize(new THREE.Vector3());
 
         // Calculate the position for the camera
+        const multiples = 1.1
         const cameraX = center.x;
-        const cameraY = center.y + 10;
-        const cameraZ = center.z + Math.max(size.x, size.y, size.z) + 10;
+        const cameraY = center.y;
+        const cameraZ = center.z + Math.max(size.x, size.y, size.z) * multiples;
 
         // Set the camera position and look at the center of the bounding box
         camera.position.set(cameraX, cameraY, cameraZ);
         camera.lookAt(center);
 
         // Set the light position
-        light.position.set(cameraX, cameraY, 100);
+        light.position.set(cameraX, cameraY, cameraZ);
       }
     }
   }
