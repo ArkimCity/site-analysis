@@ -37,7 +37,8 @@ body {
   background-color: #5a748f;
   height: 60px;
   top: 0;
-  opacity: 0.7;
+  /* opacity: 0.7; */
+
 }
 
 #nav a {
@@ -58,6 +59,7 @@ body {
   top: 50px;
   border-radius: 10px 10px 10px 10px;
   opacity: 0.9;
+  border: 4px solid #000000; /* 2px width, solid style, and black color */
 }
 
 #map {

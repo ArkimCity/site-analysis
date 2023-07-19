@@ -5,6 +5,7 @@
 <script>
 // import { Clock, PerspectiveCamera, Scene, WebGLRenderer } from 'three'
 import * as THREE from 'three'
+import { mapState } from 'vuex'
 // import TrackballControls from 'three-trackballcontrols'
 // import {
 //     BloomEffect,
@@ -26,15 +27,7 @@ const renderer = new THREE.WebGLRenderer({
   antialias: true
 })
 const light = new THREE.DirectionalLight('hsl(0, 100%, 100%)')
-const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshStandardMaterial({
-  side: THREE.FrontSide,
-  color: 'hsl(0, 100%, 50%)',
-  wireframe: false
-})
-const cube = new THREE.Mesh(geometry, material)
 const axes = new THREE.AxesHelper(5)
-const speed = 0.01
 // let controls = null
 // const controls = new TrackballControls(camera)
 
@@ -45,13 +38,11 @@ export default {
     }
   },
   created: function () {
+    this.$watch('$store.state.selectedBuilding', this.handleSelectedBuildingChange, { deep: true });
     scene.add(camera)
     scene.add(light)
-    scene.add(cube)
     scene.add(axes)
     // renderer.setSize(window.innerWidth, window.innerHeight)
-    light.position.set(0, 0, 10)
-    camera.position.z = 5
     scene.background = new THREE.Color('hsl(0, 100%, 100%)')
     // controls.rotateSpeed = 1.0
     // controls.zoomSpeed = 5
@@ -69,7 +60,7 @@ export default {
     animate: function () {
       requestAnimationFrame(this.animate)
       renderer.render(scene, camera)
-      cube.rotation.y += speed
+      // cube.rotation.y += speed
       // this.controls.update()
     }
   },
@@ -79,6 +70,50 @@ export default {
         return 0
       } else {
         return this.speed
+      }
+    },
+    ...mapState(['selectedBuilding'])
+  },
+  watch: {
+    selectedBuilding: function (newValue, oldValue) {
+      // Remove all other meshes from the scene and dispose them
+      scene.children.forEach((child) => {
+        if (child !== newValue && child.type === "Mesh") {
+          scene.remove(child);
+          // Dispose of the geometry and material to free up memory
+          child.geometry.dispose();
+          child.material.dispose();
+        }
+      });
+
+      console.log(newValue);
+
+      if (newValue.propertiesData) {
+        const box = newValue.clone();
+        scene.add(box);
+
+        console.log("box added");
+
+        // Calculate the bounding box of the box object
+        const boundingBox = new THREE.Box3().setFromObject(box);
+
+        // Calculate the center of the bounding box
+        const center = boundingBox.getCenter(new THREE.Vector3());
+
+        // Get the size of the bounding box
+        const size = boundingBox.getSize(new THREE.Vector3());
+
+        // Calculate the position for the camera
+        const cameraX = center.x;
+        const cameraY = center.y + 10;
+        const cameraZ = center.z + Math.max(size.x, size.y, size.z) + 10;
+
+        // Set the camera position and look at the center of the bounding box
+        camera.position.set(cameraX, cameraY, cameraZ);
+        camera.lookAt(center);
+
+        // Set the light position
+        light.position.set(cameraX, cameraY, 100);
       }
     }
   }
