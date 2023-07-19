@@ -83,7 +83,7 @@ export default {
     console.log(group.position)
     controls.target = new THREE.Vector3(0, 0, 0)
     // controls.enableRotate = false
-    scene.background = new THREE.Color('rgb(100, 100, 100)')
+    scene.background = new THREE.Color('rgb(230, 230, 230)')
   },
   mounted: function () {
     this.$refs.map.appendChild(renderer.domElement)
