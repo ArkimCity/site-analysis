@@ -3,33 +3,13 @@
 </template>
 
 <script>
-// import { Clock, PerspectiveCamera, Scene, WebGLRenderer } from 'three'
 import * as THREE from 'three'
 import { mapState } from 'vuex'
-// import TrackballControls from 'three-trackballcontrols'
-// import {
-//     BloomEffect,
-//     EffectComposer,
-//     GlitchPass,
-//     EffectPass,
-//     RenderPass
-// } from 'postprocessing'
 const scene = new THREE.Scene()
-// const composer = new THREE.EffectComposer(new WebGLRenderer())
-// const effectPass = new THREE.EffectPass(camera, new BloomEffect())
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-)
-const renderer = new THREE.WebGLRenderer({
-  antialias: true
-})
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+const renderer = new THREE.WebGLRenderer({ antialias: true })
 const light = new THREE.DirectionalLight('hsl(0, 100%, 100%)')
 const axes = new THREE.AxesHelper(5)
-// let controls = null
-// const controls = new TrackballControls(camera)
 
 export default {
   name: 'TheCanvas',
@@ -41,15 +21,7 @@ export default {
     scene.add(camera)
     scene.add(light)
     scene.add(axes)
-    // renderer.setSize(window.innerWidth, window.innerHeight)
     scene.background = new THREE.Color('hsl(0, 100%, 100%)')
-    // controls.rotateSpeed = 1.0
-    // controls.zoomSpeed = 5
-    // controls.panSpeed = 0.8
-    // controls.noZoom = false
-    // controls.noPan = false
-    // controls.staticMoving = true
-    // controls.dynamicDampingFactor = 0.3
   },
   mounted: function () {
     this.$refs.canvas.appendChild(renderer.domElement)
@@ -59,8 +31,6 @@ export default {
     animate: function () {
       requestAnimationFrame(this.animate)
       renderer.render(scene, camera)
-      // cube.rotation.y += speed
-      // this.controls.update()
     },
     setBuilding: function (newValue) {
       // Remove all other meshes from the scene and dispose them
