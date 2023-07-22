@@ -3,15 +3,8 @@
 </template>
 
 <script>
-// 필요 데이터 불러오기
-// import mapData from '../assets/json/building_data_divided/181815.4847600003_453778.6668600004_182619.1816800003_454375.29320000036.json'
 import mapData from '../assets/json/filtered_buildings_geojson.json'
-// import { VRButton } from 'three/examples/jsm/webxr/VRButton.js'
-
-// 상수
 import consts from '../store/constants.js'
-
-// import { Clock, PerspectiveCamera, Scene, WebGLRenderer } from 'three'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
@@ -21,18 +14,8 @@ console.log(smapleStartPoint)
 
 // 각 기본 렌더링 사항 정의
 const scene = new THREE.Scene()
-// 카메라 설정 - OrthographicCamera
-// const camera = new THREE.OrthographicCamera(
-//   window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 1000000
-// )
-const camera = new THREE.PerspectiveCamera(
-  75, window.innerWidth / window.innerHeight, 0.1, 10000
-)
-const renderer = new THREE.WebGLRenderer({
-  antialias: true
-})
-renderer.xr.enabled = true
-// document.body.appendChild(VRButton.createButton(renderer))
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000)
+const renderer = new THREE.WebGLRenderer({ antialias: true })
 const light = new THREE.AmbientLight('hsl(0, 100%, 100%)')
 const axes = new THREE.AxesHelper(5)
 const controls = new OrbitControls(camera, renderer.domElement)
@@ -43,7 +26,6 @@ const raycaster = new THREE.Raycaster()
 const pointer = new THREE.Vector2()
 function onPointerMove (event) {
   // calculate pointer position in normalized device coordinates
-  // (-1 to +1) for both components
   pointer.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1
   pointer.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1
 }
@@ -65,7 +47,6 @@ export default {
     scene.add(camera)
     scene.add(light)
 
-    // const mapDataFeaturesTest = [mapData.features[0], mapData.features[1]]
     const group = new THREE.Group()
     mapData.features.forEach((element) => {
       this.makeBuilding(element, group)
@@ -75,8 +56,6 @@ export default {
     renderer.setSize(window.innerWidth, window.innerHeight)
     window.addEventListener('resize', this.onResize, false)
     // 카메라 위치/방향 업데이트
-    // light.position.set(smapleStartPoint[0], smapleStartPoint[1], 1000)
-    // camera.position.set(smapleStartPoint[0], smapleStartPoint[1], 1000)
     light.position.set(0, 0, 1000)
     camera.position.set(0, 0, 1000)
     group.position.set(-smapleStartPoint[0], -smapleStartPoint[1], -100)
