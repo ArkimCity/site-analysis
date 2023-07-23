@@ -8,6 +8,7 @@ import mapData from '../assets/json/filtered_buildings_geojson.json'
 import consts from '../store/constants.js'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import axios from 'axios'
 
 let smapleStartPoint = mapData.features[0].geometry.coordinates[0][0]
 smapleStartPoint = [parseFloat(smapleStartPoint[0]), parseFloat(smapleStartPoint[1])]
@@ -94,7 +95,7 @@ export default {
   },
   watch: {
     fetchedPnu: function (newFetchedPnu, oldFetchedPnu) {
-      console.log(newFetchedPnu)
+      this.fetchDatasWithPnu(newFetchedPnu)
     }
   },
   methods: {
@@ -182,6 +183,21 @@ export default {
         // update any render target sizes here
         this.resizeCanvasToDisplaySize()
       }
+    },
+    fetchDatasWithPnu: function (newFetchedPnu) {
+      const requestHeaders = { Authorization: 'ApiKey SHNyRWVZa0JMYnE5ODg1RV9yYWk6a25RWXptODZRdmU0QkQzZml2YklJZw==' }
+      const requestBody = {
+        query: {
+          term: {
+            A2: '1168010500100160002'
+          }
+        }
+      }
+
+      axios.post('https://kimguro.synology.me:9200/buildings_20230615/_search', requestBody, { headers: requestHeaders }).then(response => {
+        console.log(newFetchedPnu)
+        console.log(response)
+      })
     }
   }
 }
