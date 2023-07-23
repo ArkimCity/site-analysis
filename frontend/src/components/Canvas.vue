@@ -43,32 +43,22 @@ export default {
         }
       })
 
-      console.log(newValue)
-
       if (newValue.propertiesData) {
-        const box = newValue.clone()
+        const box = newValue.clone() // 같은 three js mesh 가 두개의 scene 에 동시에 존재할 수 없기 때문에 clone 합니다.
         scene.add(box)
 
-        // Calculate the bounding box of the box object
         const boundingBox = new THREE.Box3().setFromObject(box)
-
-        // Calculate the center of the bounding box
         const center = boundingBox.getCenter(new THREE.Vector3())
-
-        // Get the size of the bounding box
         const size = boundingBox.getSize(new THREE.Vector3())
 
-        // Calculate the position for the camera
         const multiples = 1.1
         const cameraX = center.x
         const cameraY = center.y
         const cameraZ = center.z + Math.max(size.x, size.y, size.z) * multiples
 
-        // Set the camera position and look at the center of the bounding box
         camera.position.set(cameraX, cameraY, cameraZ)
         camera.lookAt(center)
 
-        // Set the light position
         light.position.set(cameraX, cameraY, cameraZ)
       }
     }
