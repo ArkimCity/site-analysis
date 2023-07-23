@@ -1,23 +1,36 @@
 <template>
 <div id='sidebar'>
   <br><br><br>
-  <div v-if="this.$store.state.selectedBuilding.propertiesData">
-    <Canvas id="canvas"></Canvas><br>
 
-    <!-- 아래는 properties -->
-    pnu: {{ this.$store.state.selectedBuilding.propertiesData.A2 }}
-    <br><br>
-    주소: {{ this.$store.state.selectedBuilding.propertiesData.A4 }}
-    {{ this.$store.state.selectedBuilding.propertiesData.A5 }}
-    <br><br>
-    용도: {{ this.$store.state.selectedBuilding.propertiesData.A9 }}
-    <br><br>
-    구조: {{ this.$store.state.selectedBuilding.propertiesData.A11 }}
-    <br>
+   pnu를 입력해주세요
+    <input
+      v-model="pnuInput"
+      @keydown.enter="handlePNU"
+      placeholder="Enter PNU"
+    />
+    <button @click="handlePNU">Fetch Buildings Data</button>
+
+  <br><br><br>
+
+  <div v-if="this.$store.state.fetchedPnu">
+    <div v-if="this.$store.state.selectedBuilding.propertiesData">
+      <Canvas id="canvas"></Canvas><br>
+      <!-- 아래는 properties -->
+      pnu: {{ this.$store.state.selectedBuilding.propertiesData.A2 }}
+      <br><br>
+      주소: {{ this.$store.state.selectedBuilding.propertiesData.A4 }}
+      {{ this.$store.state.selectedBuilding.propertiesData.A5 }}
+      <br><br>
+      용도: {{ this.$store.state.selectedBuilding.propertiesData.A9 }}
+      <br><br>
+      구조: {{ this.$store.state.selectedBuilding.propertiesData.A11 }}
+      <br>
+    </div>
+    <div v-else>
+      건물 위에 마우스를 올려주세요
+    </div>
   </div>
-  <div v-else>
-    건물 위에 마우스를 올려주세요
-  </div>
+
 </div>
 </template>
 
@@ -26,8 +39,18 @@ import Canvas from './Canvas.vue'
 
 export default {
   name: 'SideBar',
+  data: function () {
+    return {
+      pnuInput: null
+    }
+  },
   components: {
     Canvas
+  },
+  methods: {
+    handlePNU: function (event) {
+      this.$store.state.fetchedPnu = this.pnuInput
+    }
   }
 }
 </script>

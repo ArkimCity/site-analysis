@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import mapData from '../assets/json/filtered_buildings_geojson.json'
 import consts from '../store/constants.js'
 import * as THREE from 'three'
@@ -33,6 +34,7 @@ window.addEventListener('mousemove', onPointerMove)
 
 export default {
   name: 'Map',
+  // data -> computed -> created -> mounted
   data: function () {
     return {
       mapData: mapData,
@@ -41,6 +43,16 @@ export default {
       selectedBuildingMesh: {},
       defaultMeshColor: 'hsl(0, 100%, 50%)',
       selectedMeshColor: 'hsl(50, 100%, 50%)'
+    }
+  },
+  computed: {
+    ...mapState(['fetchedPnu']),
+    rotate: function () {
+      if (this.speed === '') {
+        return 0
+      } else {
+        return this.speed
+      }
     }
   },
   created: function () {
@@ -79,6 +91,11 @@ export default {
       element.material.dispose()
       scene.remove(element)
     })
+  },
+  watch: {
+    fetchedPnu: function (newFetchedPnu, oldFetchedPnu) {
+      console.log(newFetchedPnu)
+    }
   },
   methods: {
     animate: function () {
@@ -164,15 +181,6 @@ export default {
 
         // update any render target sizes here
         this.resizeCanvasToDisplaySize()
-      }
-    }
-  },
-  computed: {
-    rotate: function () {
-      if (this.speed === '') {
-        return 0
-      } else {
-        return this.speed
       }
     }
   }
