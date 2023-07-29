@@ -3,7 +3,10 @@
 http://openapi.nsdi.go.kr/nsdi/eios/OpenapiList.do?provOrg=NIA&gubun=F
     - gis 건물통합정보
     - 연속지적도형정보
-    
+
+http://www.gisdeveloper.co.kr/?p=2332
+    - 행정구역 도형
+
 <hr>
 
 - 데이터 원본 geojson 으로 변환
@@ -69,7 +72,7 @@ if __name__ == "__main__":
         x_max = max(x_max, building_x_max)
 
         map_data_filtered["features"].append(each_building)
-        
+
 
     x_interval = (x_max - x_min) / DIVISION_NUMBER
     y_interval = (y_max - y_min) / DIVISION_NUMBER
@@ -99,7 +102,7 @@ if __name__ == "__main__":
                             divided_map_data[(x_list[j], y_list[i], x_list[j + 1], y_list[i + 1])] = {"type": map_data_all["type"], "features": [each_building]}
                             breaker = True
                             break
-            
+
             if breaker:
                 break
 
@@ -115,13 +118,12 @@ if __name__ == "__main__":
 
     file_name_json = {}
     for loc_key in divided_map_data:
-        file_name = f"{loc_key[0]}_{loc_key[1]}_{loc_key[2]}_{loc_key[3]}.json"       
+        file_name = f"{loc_key[0]}_{loc_key[1]}_{loc_key[2]}_{loc_key[3]}.json"
 
         file_name_json[file_name] = {"x_min": loc_key[0], "y_min": loc_key[1], "x_max": loc_key[2], "y_max": loc_key[3]}
 
         with open(os.path.join(building_data_divided_folder_path, file_name), "w", encoding="utf-8") as f:
             json.dump(divided_map_data[loc_key], f)
-    
+
     with open(os.path.join(building_data_divided_folder_path, "..", "building_files_info.json"), "w", encoding="utf-8") as f:
         json.dump(file_name_json, f)
-    
