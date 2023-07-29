@@ -1,0 +1,18 @@
+{
+  "name": "Node.js 16.10.0",
+  "dockerFile": "Dockerfile",
+  "appPort": 3000,
+  "context": "..",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+      },
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "pkief.material-icon-theme"
+      ]
+    }
+  }
+}
