@@ -6,6 +6,7 @@ http://openapi.nsdi.go.kr/nsdi/eios/OpenapiList.do?provOrg=NIA&gubun=F
 
 http://www.gisdeveloper.co.kr/?p=2332
     - 행정구역 도형
+    - EPSG:5179
 
 <hr>
 
