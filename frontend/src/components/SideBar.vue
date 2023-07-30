@@ -7,7 +7,6 @@
     병원
     https://data.seoul.go.kr/dataList/OA-20337/S/1/datasetView.do
 
-
     학교
 
     녹지
