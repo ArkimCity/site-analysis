@@ -1,6 +1,12 @@
 <template>
   <div id='sidebar'>
     시군구
+
+    공원
+    병원
+    학교
+    녹지
+    도로
   </div>
 </template>
 
