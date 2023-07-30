@@ -4,19 +4,17 @@
 
 <script>
 import { mapState } from 'vuex'
-import mapData from '../assets/json/filtered_buildings_geojson.json'
+import districts from '../assets/json/si_goon_goo.json'
 import consts from '../store/constants.js'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import axios from 'axios'
 
-let smapleStartPoint = mapData.features[0].geometry.coordinates[0][0]
+let smapleStartPoint = districts.features[0].geometry.coordinates[0][0]
 smapleStartPoint = [parseFloat(smapleStartPoint[0]), parseFloat(smapleStartPoint[1])]
-console.log(smapleStartPoint)
 
 // 각 기본 렌더링 사항 정의
 const scene = new THREE.Scene()
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000)
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000000)
 const renderer = new THREE.WebGLRenderer({ antialias: true })
 const light = new THREE.AmbientLight('hsl(0, 100%, 100%)')
 const axes = new THREE.AxesHelper(5)
@@ -38,11 +36,11 @@ export default {
   // data -> computed -> created -> mounted
   data: function () {
     return {
-      mapData: mapData,
       buildingMeshes: [],
       buildingLines: [],
       selectedBuildingMesh: {},
       defaultMeshColor: 'hsl(0, 100%, 50%)',
+      otherDistrictMeshColor: 'hsl(10, 10%, 10%)',
       selectedMeshColor: 'hsl(50, 100%, 50%)'
     }
   },
@@ -61,20 +59,24 @@ export default {
     scene.add(light)
 
     const group = new THREE.Group()
-    mapData.features.forEach((element) => {
+    // 서울에 해당하는 25개 구
+    districts.features.slice(0, 25).forEach((element) => {
+      this.makeBuilding(element, group, true)
+    })
+    districts.features.slice(25).forEach((element) => {
       this.makeBuilding(element, group)
     })
+
     scene.add(group)
     scene.add(axes)
     renderer.setSize(window.innerWidth, window.innerHeight)
     window.addEventListener('resize', this.onResize, false)
     // 카메라 위치/방향 업데이트
-    light.position.set(0, 0, 1000)
-    camera.position.set(0, 0, 1000)
+    light.position.set(0, 0, 10000)
+    camera.position.set(0, 0, 10000)
     group.position.set(-smapleStartPoint[0], -smapleStartPoint[1], -100)
-    console.log(group.position)
     controls.target = new THREE.Vector3(0, 0, 0)
-    // controls.enableRotate = false
+    controls.enableRotate = false
     scene.background = new THREE.Color('rgb(230, 230, 230)')
   },
   mounted: function () {
@@ -111,7 +113,7 @@ export default {
       }
       if (intersects.length > 0) {
         for (let i = 0; i < intersects.length; i++) {
-          if (intersects[i].object.type === 'Mesh') {
+          if (intersects[i].object.type === 'Mesh' && intersects[i].object.propertiesData.isSeoul) {
             this.$store.state.selectedBuilding = intersects[i].object
             this.$store.state.selectedBuilding.material.color.set(this.selectedMeshColor)
             break
@@ -129,12 +131,9 @@ export default {
       camera.updateProjectionMatrix()
       renderer.setSize(window.innerWidth, window.innerHeight)
     },
-    makeBuilding: function (data, group) {
+    makeBuilding: function (data, group, isSeoul = false) {
       const coords = data.geometry.coordinates
-      let height = 1
-      if (data.properties[consts.columns['높이']] !== 0) {
-        height = data.properties[consts.columns['높이']]
-      }
+      const height = consts.DISTRICT_HEIGHT
       if (data.geometry.type === 'Polygon' && height && data.geometry.coordinates.length > 0) {
         const shape = new THREE.Shape()
         const coordsArray = coords[0]
@@ -152,11 +151,12 @@ export default {
         const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings)
         const material = new THREE.MeshStandardMaterial({
           side: THREE.FrontSide,
-          color: this.defaultMeshColor,
+          color: isSeoul ? this.defaultMeshColor : this.otherDistrictMeshColor,
           wireframe: false
         })
         const mesh = new THREE.Mesh(geometry, material)
         mesh.propertiesData = data.properties
+        mesh.propertiesData.isSeoul = isSeoul
         group.add(mesh)
         this.buildingMeshes.push(mesh)
 
@@ -183,21 +183,6 @@ export default {
         // update any render target sizes here
         this.resizeCanvasToDisplaySize()
       }
-    },
-    fetchDatasWithPnu: function (newFetchedPnu) {
-      const requestHeaders = { Authorization: 'ApiKey SHNyRWVZa0JMYnE5ODg1RV9yYWk6a25RWXptODZRdmU0QkQzZml2YklJZw==' }
-      const requestBody = {
-        query: {
-          term: {
-            A2: '1168010500100160002'
-          }
-        }
-      }
-
-      axios.post('https://kimguro.synology.me:9200/buildings_20230615/_search', requestBody, { headers: requestHeaders }).then(response => {
-        console.log(newFetchedPnu)
-        console.log(response)
-      })
     }
   }
 }
