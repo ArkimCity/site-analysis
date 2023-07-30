@@ -4,11 +4,14 @@
 
 <script>
 import { mapState } from 'vuex'
-import districts from '../assets/json/si_goon_goo.json'
 import consts from '../store/constants.js'
+import proj4 from 'proj4'
+import districts from '../assets/json/si_goon_goo.json'
+import seoulHospital from '../assets/json/seoul_hospital.json'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
+// ----------------------------------------------------------------------------
 let smapleStartPoint = districts.features[0].geometry.coordinates[0][0]
 smapleStartPoint = [parseFloat(smapleStartPoint[0]), parseFloat(smapleStartPoint[1])]
 
@@ -30,6 +33,7 @@ function onPointerMove (event) {
   pointer.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1
 }
 window.addEventListener('mousemove', onPointerMove)
+// ----------------------------------------------------------------------------
 
 export default {
   name: 'Map',
@@ -40,7 +44,7 @@ export default {
       buildingLines: [],
       selectedBuildingMesh: {},
       defaultMeshColor: 'hsl(0, 100%, 50%)',
-      otherDistrictMeshColor: 'hsl(10, 10%, 10%)',
+      otherDistrictMeshColor: 'hsl(10, 90%, 90%)',
       selectedMeshColor: 'hsl(50, 100%, 50%)'
     }
   },
@@ -61,10 +65,32 @@ export default {
     const group = new THREE.Group()
     // 서울에 해당하는 25개 구
     districts.features.slice(0, 25).forEach((element) => {
-      this.makeBuilding(element, group, true)
+      this.makeDistrict(element, group, true)
     })
+    // 이외에 해당하는 시군구
     districts.features.slice(25).forEach((element) => {
-      this.makeBuilding(element, group)
+      this.makeDistrict(element, group)
+    })
+    // 서울에 있는 병원 데이터
+    seoulHospital.DATA.forEach((eachHospital) => {
+      let radius = 500
+      if (['의원', '한의원', '치과의원'].includes(eachHospital.dutydivnam)) {
+        return // 너무 많아서 일단 스킵
+      } else if (['병원', '한방병원', '치과병원'].includes(eachHospital.dutydivnam)) {
+        radius = 1000
+      } else if (['종합병원'].includes(eachHospital.dutydivnam)) {
+        radius = 3000
+      } else {
+        return
+      }
+
+      const { x, y } = this.convertLatLongToEPSG5179(eachHospital.wgs84lat, eachHospital.wgs84lon)
+      const height = 2 // Replace with the desired height for the extrusion
+
+      const circleExtrudeMesh = this.createCircleExtrudeGeometry(x, y, height, radius, 0x0000ff, 0.3)
+      circleExtrudeMesh.propertiesData = { isSeoul: false } // FIXME
+
+      group.add(circleExtrudeMesh)
     })
 
     scene.add(group)
@@ -131,7 +157,7 @@ export default {
       camera.updateProjectionMatrix()
       renderer.setSize(window.innerWidth, window.innerHeight)
     },
-    makeBuilding: function (data, group, isSeoul = false) {
+    makeDistrict: function (data, group, isSeoul = false) {
       const coords = data.geometry.coordinates
       const height = consts.DISTRICT_HEIGHT
       if (data.geometry.type === 'Polygon' && height && data.geometry.coordinates.length > 0) {
@@ -183,6 +209,27 @@ export default {
         // update any render target sizes here
         this.resizeCanvasToDisplaySize()
       }
+    },
+    convertLatLongToEPSG5179: function (latitude, longitude) {
+      const sourceEPSG = 'EPSG:4326' // WGS84 (latitude and longitude)
+      const targetEPSG = 'EPSG:5179' // Korean Transverse Mercator (KTM)
+      // proj4.defs(sourceEPSG, '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs')
+      proj4.defs(targetEPSG, '+proj=tmerc +lat_0=38 +lon_0=127.5 +k=0.9996 +x_0=1000000 +y_0=2000000 +ellps=GRS80 +units=m +no_defs')
+
+      const point = proj4(sourceEPSG, targetEPSG, [parseFloat(longitude), parseFloat(latitude)])
+      return { x: point[0], y: point[1] }
+    },
+    createCircleExtrudeGeometry: function (x, y, height, radius, color, opacity) {
+      const material = new THREE.MeshPhongMaterial({
+        color: color,
+        transparent: true,
+        opacity: opacity
+      })
+
+      const circleExtrudeGeometry = new THREE.SphereBufferGeometry(radius, 8, 8)
+      circleExtrudeGeometry.translate(x, y, 0)
+      const circleExtrudeMesh = new THREE.Mesh(circleExtrudeGeometry, material)
+      return circleExtrudeMesh
     }
   }
 }
