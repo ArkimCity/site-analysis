@@ -1,5 +1,5 @@
 {
-  "name": "Node.js 16.10.0",
+  "name": "Node.js 16.14.0",
   "dockerFile": "Dockerfile",
   "appPort": 3000,
   "context": "..",
