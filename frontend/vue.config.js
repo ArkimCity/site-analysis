@@ -1,15 +1,10 @@
+const { defineConfig } = require('@vue/cli-service')
+const path = require('path')
 
-const path = require("path");
-module.exports = {
+module.exports = defineConfig({
   outputDir: path.resolve(__dirname, "../docs"),
   publicPath: process.env.NODE_ENV === 'production'
-    ? '/site-analysis/'
-    : '/',
-  devServer: {
-    // open: process.platform === 'darwin',
-    // host: '0.0.0.0',
-    // port: 8085, // CHANGE YOUR PORT HERE!
-    // hotOnly: false,
-    https: true,
-  },
-}
+  ? '/site-analysis/'
+  : '/',
+  transpileDependencies: true
+})

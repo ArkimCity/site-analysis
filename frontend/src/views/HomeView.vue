@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <MapLibre></MapLibre>
+    <MglContainer id="mgl-container"></MglContainer>
   </div>
 </template>
 
@@ -8,12 +8,18 @@
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
 // import Map from '../components/Map.vue'
-import MapLibre from '../components/MapLibre.vue'
+import MglContainer from '../components/MglContainer.vue'
 
 export default {
-  name: 'Home',
+  name: 'HomeView',
   components: {
-    MapLibre
+    MglContainer
   }
 }
 </script>
+
+<style>
+.home {
+  height: 100vh;
+}
+</style>
