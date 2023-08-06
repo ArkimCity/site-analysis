@@ -1,37 +1,37 @@
 <template>
-  <div id="map" style="width: 100%; height: 400px;"></div>
+  <div>
+    <MglMap
+      mapStyle="https://api.maptiler.com/maps/streets/style.json?key=ZeIDe0UYO8FtUdnVvqI0"
+      :center="center"
+      :zoom="zoom"
+    >
+      <MglNavigationControl position="top-right"></MglNavigationControl>
+      <MglMarker :coordinates="center"></MglMarker>
+    </MglMap>
+  </div>
 </template>
 
 <script>
-import maplibregl from 'maplibre-gl'
+import { MglMap, MglNavigationControl, MglMarker } from 'vue-maplibre-gl'
 
 export default {
   name: 'MapComponent',
+  components: {
+    MglMap,
+    MglNavigationControl,
+    MglMarker
+  },
   data () {
     return {
-      map: null
-    }
-  },
-  mounted () {
-    this.initializeMap()
-  },
-  methods: {
-    initializeMap () {
-      this.map = new maplibregl.Map({
-        container: 'map',
-        center: [38, 127], // initial map center [lng, lat]
-        zoom: 1
-      })
-    }
-  },
-  beforeUnmount () {
-    if (this.map) {
-      this.map.remove()
+      center: [126.9780, 37.5665], // Coordinates for Seoul
+      zoom: 1
     }
   }
 }
 </script>
 
 <style>
-/* Add styles here if needed */
+.maplibregl-canvas {
+  width: 100px;
+}
 </style>
