@@ -7,25 +7,24 @@ import maplibregl from 'maplibre-gl'
 
 export default {
   name: 'MapComponent',
-  data() {
+  data () {
     return {
       map: null
     }
   },
-  mounted() {
+  mounted () {
     this.initializeMap()
   },
   methods: {
-    initializeMap() {
+    initializeMap () {
       this.map = new maplibregl.Map({
         container: 'map',
-        style: 'https://maplibre.org/maplibre-gl-js-docs/style-spec/json/examples/osm-liberty.json',
-        center: [0, 0], // initial map center [lng, lat]
+        center: [38, 127], // initial map center [lng, lat]
         zoom: 1
       })
     }
   },
-  beforeDestroy() {
+  beforeUnmount () {
     if (this.map) {
       this.map.remove()
     }
