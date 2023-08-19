@@ -1,16 +1,16 @@
 <template>
   <div>
-    <!-- <SideBar id="sidebar"/> -->
+    <SideBar id="sidebar"/>
     <router-view/>
   </div>
 </template>
 
 <script>
-// import SideBar from './components/SideBar.vue'
+import SideBar from './components/SideBar.vue'
 
 export default {
   components: {
-    // SideBar
+    SideBar
   }
 }
 </script>
@@ -34,5 +34,18 @@ code {
 #app {
   width: 100%;
   height: 100vh;
+}
+
+#sidebar {
+  position: absolute;
+  background-color: aliceblue;
+  height: 90vh;
+  width: 300px;
+  left: 50px;
+  top: 50px;
+  border-radius: 10px 10px 10px 10px;
+  opacity: 0.9;
+  border: 4px solid #000000; /* 2px width, solid style, and black color */
+  z-index: 2;
 }
 </style>
