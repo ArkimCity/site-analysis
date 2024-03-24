@@ -121,17 +121,17 @@ def prepare_save_path(folder_name):
     return data_divided_folder_path
 
 
-def save_divided_results(data_divided_folder_path, mode):
+def save_divided_results(divided_map_data, data_divided_folder_path, mode):
     assert mode in ("parcels", "buildings")
 
     file_name_json = {}
-    for loc_key in divided_parcels_map_data:
+    for loc_key in divided_map_data:
         file_name = f"{loc_key[0]}_{loc_key[1]}_{loc_key[2]}_{loc_key[3]}.json"
 
         file_name_json[file_name] = {"x_min": loc_key[0], "y_min": loc_key[1], "x_max": loc_key[2], "y_max": loc_key[3]}
 
         with open(os.path.join(data_divided_folder_path, file_name), "w", encoding="utf-8") as f:
-            json.dump(divided_parcels_map_data[loc_key], f)
+            json.dump(divided_map_data[loc_key], f)
 
     with open(
         os.path.join(data_divided_folder_path, "..", f"{mode}_files_info.json"), "w", encoding="utf-8"
@@ -164,5 +164,5 @@ if __name__ == "__main__":
     parcels_data_divided_folder_path = prepare_save_path("parcels_data_divided")
     buildings_data_divided_folder_path = prepare_save_path("buildings_data_divided")
 
-    save_divided_results(parcels_data_divided_folder_path, "parcels")
-    save_divided_results(buildings_data_divided_folder_path, "buildings")
+    save_divided_results(divided_parcels_map_data, parcels_data_divided_folder_path, "parcels")
+    save_divided_results(divided_buildings_map_data, buildings_data_divided_folder_path, "buildings")
