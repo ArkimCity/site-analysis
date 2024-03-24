@@ -38,7 +38,7 @@ def flatten_list(nested_list):
 
 if __name__ == "__main__":
     # 002 - 필지, 010 - 건물
-    buildings_json_file = "AL_11_D002_20230506.json"
+    buildings_json_file = "N3A_B0010000_11.json"
 
     with open(os.path.join(os.path.abspath(__file__), "..", buildings_json_file), encoding="utf-8") as f:
         map_data_all = json.load(f)
@@ -108,7 +108,7 @@ if __name__ == "__main__":
                 break
 
     # 분할된 건물 데이터 폴더 생성
-    building_data_divided_folder_path = os.path.join(os.path.abspath(__file__), "..", "..", "frontend/src/assets/json/building_data_divided")
+    building_data_divided_folder_path = os.path.join(os.path.abspath(__file__), "..", "..", "frontend/src/assets/json/buildings_data_divided")
     if not os.path.exists(building_data_divided_folder_path):
         # 없을 경우 새로 생성
         os.mkdir(building_data_divided_folder_path)
